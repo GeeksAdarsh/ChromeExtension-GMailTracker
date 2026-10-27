@@ -1,0 +1,6 @@
+# Personal data exported from an older install; never commit it.
+extension/migrate.json
+*.crx
+*.pem
+.DS_Store
+Thumbs.db

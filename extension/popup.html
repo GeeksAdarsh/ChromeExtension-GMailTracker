@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Seenly — Gmail Tracker</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="icons/icon48.png" width="32" height="32" alt="">
+      <div>
+        <h1>Seenly <span>— Gmail Tracker</span></h1>
+      </div>
+    </div>
+    <button id="guide-btn" type="button">Guide</button>
+  </header>
+
+  <div id="app">
+    <p id="status" class="status">Checking your Gmail…</p>
+
+    <section id="connect" class="connect" hidden>
+      <h2>Connect Gmail</h2>
+      <p>Sign in to the Gmail account you send from. Seenly then puts a tick beside that mail in Gmail.</p>
+      <button id="connect-btn" type="button">Connect Gmail</button>
+    </section>
+
+    <section id="account" class="account" hidden>
+      <div>
+        <p class="hint">Connected account</p>
+        <strong id="account-email"></strong>
+      </div>
+      <button id="disconnect" type="button">Disconnect</button>
+    </section>
+
+    <p id="legend" class="legend" hidden><span class="sent">✓</span> Sent <span class="saw">✓✓</span> Saw it</p>
+
+    <section id="live" class="live" hidden>
+      <span class="dot" aria-hidden="true"></span>
+      <div>
+        <strong id="live-title">Watching for opens</strong>
+        <p id="live-note">✓✓ shows up within about a minute after they open your mail.</p>
+      </div>
+    </section>
+
+    <section id="warning" class="warning" hidden></section>
+  </div>
+
+  <section id="guide" class="guide" hidden>
+    <h2>How to use Seenly</h2>
+    <p class="lead">Three steps. Then send mail the way you already do.</p>
+    <ol>
+      <li>
+        <span>1</span>
+        <div>
+          <strong>Connect Gmail</strong>
+          <p>Use the account you send from.</p>
+        </div>
+      </li>
+      <li>
+        <span>2</span>
+        <div>
+          <strong>Send your mail</strong>
+          <p>Write and send as usual. Seenly adds its tracking image for you.</p>
+        </div>
+      </li>
+      <li>
+        <span>3</span>
+        <div>
+          <strong>Check the ticks</strong>
+          <p>One gray tick means sent. Two green ticks mean they saw it. Open Chrome at least once every 12 hours so no open is missed.</p>
+        </div>
+      </li>
+    </ol>
+    <button id="guide-done" type="button">Continue</button>
+  </section>
+
+  <footer>
+    <span>Seenly — Gmail Tracker · 1.0</span>
+    <button id="open-log" type="button">Help</button>
+  </footer>
+  <script src="popup.js"></script>
+</body>
+</html>

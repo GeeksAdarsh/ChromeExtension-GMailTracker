@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Seenly — Gmail Tracker",
+  "version": "1.0.0",
+  "description": "Seenly is a Gmail tracker. Connect your account and see whether someone saw a mail you sent.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwoFuXDPeCl7aZec6YesCguZcEe8etKeQzK03smMfCOP0fZ6VsKaErP1CoLuuTunJj5xT2+U1bs4UVDy3zltsuea8F67z9wOjFEA5Y+0GignTAa79roRMuY5Mnp87r/hBIj6x3Yudy3oWwK5+PY9LgeXyK06RSZVfFx/BZSaeMRIymifDVVXGIyNWT6abb86nid0hVd/auqzYGsj+/LU3JFt8mbhmzL1iir5b8DYZ/JsV8q120cRK0Ic0qJjl3bJnjwEVRvz/LKK9zf/JaG6jeoRrNlIXiboT2bnNwfyTnqYim/oUuSNahjdWsMild9N3/9QWsXXBL9mpzUuKcHafJwIDAQAB",
+  "permissions": ["storage", "alarms"],
+  "host_permissions": [
+    "https://ntfy.sh/*"
+  ],
+  "background": {
+    "service_worker": "extension/background.js"
+  },
+  "action": {
+    "default_title": "Seenly — Gmail Tracker",
+    "default_popup": "extension/popup.html",
+    "default_icon": {
+      "16": "extension/icons/icon16.png",
+      "48": "extension/icons/icon48.png",
+      "128": "extension/icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "extension/icons/icon16.png",
+    "48": "extension/icons/icon48.png",
+    "128": "extension/icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["extension/content.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ]
+}
