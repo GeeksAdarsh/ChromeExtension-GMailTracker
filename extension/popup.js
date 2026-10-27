@@ -114,11 +114,7 @@ async function refresh() {
   legendEl.hidden = false;
   liveEl.hidden = false;
   renderAccounts(accounts);
-  statusEl.textContent = stored.awaitingConnect
-    ? 'Waiting for the new account. In the Gmail tab, pick or sign in to the Gmail you want to add.'
-    : accounts.length === 1
-      ? `Watching mail sent from ${accounts[0]}`
-      : `Watching mail sent from ${accounts.length} Gmail accounts`;
+  statusEl.textContent = `Watching mail sent from ${accounts.join(', ')}`;
   renderLive();
 
   const data = await ask({ type: 'list', force: true });
@@ -163,12 +159,6 @@ document.querySelector('#connect-btn').addEventListener('click', async () => {
   await storageSet({ awaitingConnect: true });
   await chrome.tabs.create({ url: 'https://mail.google.com/' });
   showDisconnected(true);
-});
-
-document.querySelector('#add-account').addEventListener('click', async () => {
-  await storageSet({ awaitingConnect: true });
-  await chrome.tabs.create({ url: 'https://accounts.google.com/AccountChooser?continue=https://mail.google.com/mail/' });
-  await refresh();
 });
 
 document.querySelector('#open-log').addEventListener('click', () => {

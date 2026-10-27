@@ -637,7 +637,7 @@
         : (accounts.length === 1 ? accounts[0] : '');
       state.connectedEmail = active;
       state.accountNote = !active && email && accounts.length
-        ? `This Gmail is ${email}. Add it from the Seenly icon to track mail sent from it.`
+        ? `This Gmail is ${email}. Seenly is connected to ${accounts.join(', ')}.`
         : '';
     });
   }

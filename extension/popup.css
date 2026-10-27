@@ -323,16 +323,6 @@ footer {
   white-space: nowrap;
 }
 
-#add-account {
-  margin-top: 6px;
-  border: 0;
-  background: transparent;
-  color: var(--green);
-  font-weight: 700;
-  cursor: pointer;
-  padding: 4px 0;
-}
-
 .disconnect {
   border: 0;
   background: transparent;
