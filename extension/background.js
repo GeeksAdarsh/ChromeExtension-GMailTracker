@@ -331,9 +331,10 @@ async function selfView(ids) {
 async function refreshBadge() {
   try {
     const list = await listEmails();
-    const { seen, connectedEmail } = await chrome.storage.local.get({ seen: {}, connectedEmail: '' });
+    const { seen, accounts, connectedEmail } = await chrome.storage.local.get({ seen: {}, accounts: null, connectedEmail: '' });
+    const mine = Array.isArray(accounts) ? accounts : connectedEmail ? [connectedEmail] : [];
     const unseen = list.filter((email) => {
-      if (connectedEmail && email.from && email.from !== connectedEmail) return false;
+      if (mine.length && email.from && !mine.includes(email.from)) return false;
       if (!email.lastOpenedAt) return false;
       return !seen[email.id] || seen[email.id] < email.lastOpenedAt;
     }).length;
@@ -399,11 +400,13 @@ async function importMigration() {
     return;
   }
   await serial(async () => {
-    const stored = await chrome.storage.local.get({ emails: {}, connectedEmail: '', guideDone: false, seen: {} });
+    const stored = await chrome.storage.local.get({ emails: {}, accounts: null, guideDone: false, seen: {} });
     const emails = { ...(data.emails || {}), ...stored.emails };
+    const accounts = new Set(stored.accounts || []);
+    if (data.connectedEmail) accounts.add(data.connectedEmail);
     await chrome.storage.local.set({
       emails: prune(emails),
-      connectedEmail: stored.connectedEmail || data.connectedEmail || '',
+      accounts: [...accounts],
       guideDone: stored.guideDone || Boolean(data.guideDone),
       seen: { ...(data.seen || {}), ...stored.seen },
       migrated: true

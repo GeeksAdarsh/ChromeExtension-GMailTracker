@@ -8,7 +8,7 @@ const warningEl = document.querySelector('#warning');
 const legendEl = document.querySelector('#legend');
 const connectEl = document.querySelector('#connect');
 const accountEl = document.querySelector('#account');
-const accountEmailEl = document.querySelector('#account-email');
+const accountListEl = document.querySelector('#account-list');
 const liveEl = document.querySelector('#live');
 const liveTitleEl = document.querySelector('#live-title');
 let checkedAt = 0;
@@ -71,14 +71,40 @@ function showDisconnected(waiting) {
     : 'Connect the Gmail account you send from.';
 }
 
+function accountList(data) {
+  if (Array.isArray(data.accounts)) return data.accounts;
+  return data.connectedEmail ? [data.connectedEmail] : [];
+}
+
+function renderAccounts(accounts) {
+  accountListEl.replaceChildren();
+  for (const email of accounts) {
+    const item = document.createElement('li');
+    const name = document.createElement('strong');
+    name.textContent = email;
+    name.title = email;
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'disconnect';
+    remove.textContent = 'Disconnect';
+    remove.addEventListener('click', async () => {
+      const current = accountList(await storageGet({ accounts: null, connectedEmail: '' }));
+      await storageSet({ accounts: current.filter((other) => other !== email), connectedEmail: '' });
+    });
+    item.append(name, remove);
+    accountListEl.append(item);
+  }
+}
+
 async function refresh() {
-  const stored = await storageGet({ connectedEmail: '', awaitingConnect: false, guideDone: false });
+  const stored = await storageGet({ accounts: null, connectedEmail: '', awaitingConnect: false, guideDone: false });
   if (!stored.guideDone || guideForced) {
     showGuide();
     return;
   }
   hideGuide();
-  if (!stored.connectedEmail) {
+  const accounts = accountList(stored);
+  if (!accounts.length) {
     showDisconnected(stored.awaitingConnect);
     return;
   }
@@ -87,8 +113,12 @@ async function refresh() {
   accountEl.hidden = false;
   legendEl.hidden = false;
   liveEl.hidden = false;
-  accountEmailEl.textContent = stored.connectedEmail;
-  statusEl.textContent = `Watching mail sent from ${stored.connectedEmail}`;
+  renderAccounts(accounts);
+  statusEl.textContent = stored.awaitingConnect
+    ? 'Waiting for the new account. In the Gmail tab, pick or sign in to the Gmail you want to add.'
+    : accounts.length === 1
+      ? `Watching mail sent from ${accounts[0]}`
+      : `Watching mail sent from ${accounts.length} Gmail accounts`;
   renderLive();
 
   const data = await ask({ type: 'list', force: true });
@@ -107,7 +137,7 @@ async function refresh() {
   } else {
     warningEl.hidden = true;
   }
-  const mine = (data.emails || []).filter((email) => !email.from || email.from === stored.connectedEmail);
+  const mine = (data.emails || []).filter((email) => !email.from || accounts.includes(email.from));
   await ask({ type: 'markSeen', emails: mine });
 }
 
@@ -135,9 +165,10 @@ document.querySelector('#connect-btn').addEventListener('click', async () => {
   showDisconnected(true);
 });
 
-document.querySelector('#disconnect').addEventListener('click', async () => {
-  await storageSet({ connectedEmail: '', awaitingConnect: false });
-  showDisconnected(false);
+document.querySelector('#add-account').addEventListener('click', async () => {
+  await storageSet({ awaitingConnect: true });
+  await chrome.tabs.create({ url: 'https://accounts.google.com/AccountChooser?continue=https://mail.google.com/mail/' });
+  await refresh();
 });
 
 document.querySelector('#open-log').addEventListener('click', () => {
@@ -146,7 +177,7 @@ document.querySelector('#open-log').addEventListener('click', () => {
 });
 
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === 'local' && (changes.connectedEmail || changes.awaitingConnect)) refresh();
+  if (area === 'local' && (changes.accounts || changes.connectedEmail || changes.awaitingConnect)) refresh();
 });
 
 refresh();

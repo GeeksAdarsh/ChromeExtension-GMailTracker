@@ -615,39 +615,36 @@
     const email = readSignedInEmail();
     state.signedInEmail = email;
     if (!alive()) return;
-    chrome.storage.local.get({ awaitingConnect: false, connectedEmail: '' }, (data) => {
+    chrome.storage.local.get({ awaitingConnect: false, accounts: null, connectedEmail: '' }, (data) => {
       if (chrome.runtime.lastError || !data) return;
-      if (data.awaitingConnect && email) {
+      const accounts = Array.isArray(data.accounts)
+        ? data.accounts
+        : data.connectedEmail ? [data.connectedEmail] : [];
+      if (data.awaitingConnect && email && !accounts.includes(email)) {
         state.connectedEmail = email;
+        state.accountNote = '';
         chrome.storage.local.set({
-          connectedEmail: email,
-          awaitingConnect: false,
-          connectedAt: Date.now()
+          accounts: [...accounts, email],
+          connectedEmail: '',
+          awaitingConnect: false
         });
         toast(`Connected as ${email}`);
         renderPanel();
         return;
       }
-      if (!data.connectedEmail) {
-        state.connectedEmail = '';
-        state.accountNote = '';
-        return;
-      }
-      if (email && email !== data.connectedEmail) {
-        state.connectedEmail = '';
-        state.accountNote = `This Gmail is ${email}. The extension is connected to ${data.connectedEmail}.`;
-        return;
-      }
-      state.accountNote = '';
-      state.connectedEmail = data.connectedEmail;
+      const active = email
+        ? (accounts.includes(email) ? email : '')
+        : (accounts.length === 1 ? accounts[0] : '');
+      state.connectedEmail = active;
+      state.accountNote = !active && email && accounts.length
+        ? `This Gmail is ${email}. Add it from the Seenly icon to track mail sent from it.`
+        : '';
     });
   }
 
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') return;
-    if (changes.connectedEmail) {
-      state.connectedEmail = changes.connectedEmail.newValue || '';
-    }
+    if (changes.accounts || changes.connectedEmail) syncAccount();
     renderPanel();
   });
 

@@ -25,13 +25,21 @@ The ticks appear in the Gmail list, next to the recipient's name. Opens on a pho
 
 Seenly ignores your own opens, so reading your Sent folder won't mark a mail as seen.
 
+## More than one Gmail address
+
+Click the Seenly icon, then **+ Add another Gmail**, and pick or sign in to the other address. Every connected address is tracked at the same time. Each Gmail tab shows the ticks for the address it's signed in to, whether it's `mail/u/0`, `mail/u/1`, and so on. Click **Disconnect** next to an address to stop tracking it.
+
+## Other people
+
+Anyone can install Seenly from this repository and connect their own Gmail. Their tracked mail and opens stay in their own Chrome, completely separate from yours, and neither of you can see the other's data.
+
 ## Use it on more than one computer
 
 Seenly shares your tracked mail between computers through Chrome's own sync, the same feature that syncs your bookmarks. On each computer:
 
 1. Sign in to Chrome with the **same Google account** and make sure **Sync is on** (`chrome://settings/syncSetup`).
 2. Install Seenly from this repository as described in [Install](#install). The extension has a fixed ID, so every copy shares the same data.
-3. Click the Seenly icon and connect the **same Gmail account**.
+3. Click the Seenly icon and connect the **same Gmail addresses**. Connected addresses are set separately on each computer.
 
 Mail you send on one computer then shows its ticks on all of them, and an open recorded by any computer shows up everywhere within a minute or two.
 
@@ -75,4 +83,4 @@ extension/
 
 ## Privacy
 
-Seenly only tracks mail that you send from the Gmail account you connect. It never reads your inbox or anyone else's mail. Everything it keeps stays in your Chrome profile, apart from the open and sent markers on ntfy.sh, which expire after 12 hours.
+Seenly only tracks mail that you send from the Gmail addresses you connect. It never reads your inbox or anyone else's mail. Everything it keeps stays in your Chrome profile, apart from the open and sent markers on ntfy.sh, which expire after 12 hours.
